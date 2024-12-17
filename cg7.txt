@@ -1,0 +1,130 @@
+#include <iostream> 
+#include <vector> 
+using namespace std; 
+ 
+class Player { 
+public: 
+    virtual char getSymbol() const = 0;   // Pure virtual function for player symbol 
+    virtual void makeMove(vector<char>& board) = 0;  // Pure virtual function for player move 
+}; 
+ 
+class HumanPlayer : public Player { 
+    char symbol; 
+public: 
+    HumanPlayer(char sym) : symbol(sym) {} 
+ 
+    char getSymbol() const override { 
+        return symbol; 
+    } 
+ 
+    void makeMove(vector<char>& board) override { 
+        int position; 
+        cout << "Enter the position (1-9) for " << symbol << ": "; 
+        while (true) { 
+            cin >> position; 
+            if (position >= 1 && position <= 9 && board[position - 1] == ' ') { 
+                board[position - 1] = symbol; 
+                break; 
+            } else { 
+                cout << "Invalid move. Try again: "; 
+            } 
+        } 
+    } 
+}; 
+ 
+class ComputerPlayer : public Player { 
+    char symbol; 
+public: 
+    ComputerPlayer(char sym) : symbol(sym) {} 
+ 
+    char getSymbol() const override { 
+        return symbol; 
+    } 
+ 
+    void makeMove(vector<char>& board) override { 
+        for (int i = 0; i < 9; ++i) { 
+            if (board[i] == ' ') { 
+                board[i] = symbol; 
+                cout << "Computer chose position " << i + 1 << endl; 
+                break; 
+            } 
+        } 
+    } 
+}; 
+ 
+class Game { 
+    vector<char> board; 
+    Player* player1; 
+    Player* player2; 
+    Player* currentPlayer; 
+ 
+public: 
+    Game(Player* p1, Player* p2) : player1(p1), player2(p2), board(9, ' ') { 
+        currentPlayer = player1; 
+    } 
+ 
+    void displayBoard() { 
+        cout << "\n"; 
+        for (int i = 0; i < 9; i += 3) { 
+            cout << " " << board[i] << " | " << board[i + 1] << " | " << board[i + 2] << "\n"; 
+            if (i < 6) cout << "---|---|---\n"; 
+        } 
+        cout << "\n"; 
+    } 
+ 
+    bool checkWin() { 
+        const int winPatterns[8][3] = { 
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, 
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, 
+            {0, 4, 8}, {2, 4, 6} 
+        }; 
+        for (const auto& pattern : winPatterns) { 
+            if (board[pattern[0]] != ' ' && 
+                board[pattern[0]] == board[pattern[1]] && 
+                board[pattern[1]] == board[pattern[2]]) { 
+                return true; 
+            } 
+        } 
+        return false; 
+    } 
+ 
+    bool isBoardFull() { 
+        for (char cell : board) { 
+            if (cell == ' ') return false; 
+        } 
+        return true; 
+    } 
+ 
+    void switchPlayer() { 
+        currentPlayer = (currentPlayer == player1) ? player2 : player1; 
+    } 
+ 
+    void play() { 
+        displayBoard(); 
+        while (true) { 
+            currentPlayer->makeMove(board); 
+            displayBoard(); 
+            if (checkWin()) { 
+                cout << "Player " << currentPlayer->getSymbol() << " wins!\n"; 
+                break; 
+            } else if (isBoardFull()) { 
+                cout << "It's a draw!\n"; 
+                break; 
+ 
+ 
+ 
+ 
+ 
+ 
+} 
+} 
+switchPlayer(); 
+} 
+}; 
+int main() { 
+HumanPlayer p1('X'); 
+ComputerPlayer p2('O'); 
+Game game(&p1, &p2); 
+game.play(); 
+return 0; 
+}
