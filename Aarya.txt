@@ -1,0 +1,53 @@
+#include <iostream>
+#include <cmath>
+#include <thread>
+#include <chrono>
+
+const int WIDTH = 80; // Width of the console
+const int HEIGHT = 20; // Height of the console
+const double PI = 3.14159265358979323846;
+
+class Ball {
+public:
+    virtual void bounce(double time) = 0; // Pure virtual function
+};
+
+class SineWaveBall : public Ball {
+private:
+    double amplitude; // Amplitude of the sine wave
+    double frequency; // Frequency of the sine wave
+
+public:
+    SineWaveBall(double amp, double freq) : amplitude(amp), frequency(freq) {}
+
+    void bounce(double time) override {
+        // Calculate the vertical position using a sine wave
+        int y = static_cast<int>(amplitude * sin(frequency * time));
+        y = (HEIGHT / 2) - y; // Center the wave in the console
+
+        // Clear the console
+        system("clear"); // Use "cls" on Windows
+
+        // Draw the ball
+        for (int i = 0; i < HEIGHT; ++i) {
+            if (i == y) {
+                std::cout << std::string(WIDTH / 2, ' ') << "O" << std::endl; // Ball representation
+            } else {
+                std::cout << std::string(WIDTH / 2, ' ') << "|" << std::endl; // Empty space
+            }
+        }
+    }
+};
+
+int main() {
+    SineWaveBall ball(5.0, 0.5); // Create a ball with amplitude 5 and frequency 0.5
+    double time = 0.0;
+
+    while (true) {
+        ball.bounce(time);
+        time += 0.1; // Increment time
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Control the speed of the animation
+    }
+
+    return 0;
+}
